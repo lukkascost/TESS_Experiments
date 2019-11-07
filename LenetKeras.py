@@ -1,29 +1,46 @@
-from comet_ml import Experiment
-import scipy.io.wavfile as wav
 import numpy as np
-# experiment = Experiment(api_key="9F7edG4BHTWFJJetI2XctSUzM",
-#                         project_name="teste-lenet", workspace="lukkascost")
+from comet_ml import Experiment
+experiment = Experiment(api_key="9F7edG4BHTWFJJetI2XctSUzM",
+                        project_name="teste-lenet", workspace="lukkascost")
+from keras import Sequential, optimizers, losses
+from keras.layers import Conv1D, AveragePooling1D, Flatten, Dense, Reshape
+from keras.utils import to_categorical
+from sklearn.model_selection import KFold, train_test_split
 
-Classes = ['Angry', 'disgust']
-for c in range(1,3):
-    data = []
-    labels = []
-    for i in range (1,3):
-        for j in range(1,201):
-            if (j== 48 and i ==2 and c == 1): continue
-            data.append(wav.read('../Dataset_tess/C{2}/C{2}_{0}_{1}.wav'.format(i,j,c))[1])
-            labels.append('{}_{}'.format(i,Classes[c-1]))
+data = np.loadtxt('wav_data_c1.txt', delimiter=',', dtype=object)
+atts = data[:, :-1]
+labels = data[:, -1]
 
-    x = [k.shape for k in data]
+labels[labels ==  '1_Angry'] = 0
+labels[labels ==  '2_Angry'] = 1
 
-    data_matrix = np.zeros((len(x), max(x)[0]+1), dtype=object)
-    print(data_matrix)
+X_train, X_test, y_train, y_test = train_test_split(atts, labels, test_size=0.20, random_state=42)
+y_train = to_categorical(y_train)
+y_test = to_categorical(y_test)
 
-    for i,k in enumerate(data):
-        print(i,len(k))
-        data_matrix[i][:len(k)] = k
-    for i,k in enumerate(labels):
-        data_matrix[i][-1] = k
-    print(data_matrix.shape)
+n_timesteps, n_features, n_outputs = atts.shape[1], 1, 2
+EPOCHS = 10
+BATCH_SIZE = 128
 
-    np.savetxt('Dataset/wav_data_c{}.txt'.format(c),data_matrix,delimiter=',', fmt="%s")
+
+
+model = Sequential()
+model.add(Reshape((n_timesteps, n_features), input_shape=(atts.shape[1],)))
+model.add(Conv1D(filters=6, kernel_size=3, activation='relu', input_shape=(n_timesteps, n_features)))
+model.add(AveragePooling1D())
+model.add(Conv1D(filters=16, kernel_size=3, activation='relu'))
+model.add(AveragePooling1D())
+model.add(Flatten())
+model.add(Dense(units=120, activation='relu'))
+model.add(Dense(units=84, activation='relu'))
+model.add(Dense(units=2, activation='softmax'))
+
+model.summary()
+
+model.compile(loss='categorical_crossentropy', optimizer=optimizers.Adam(), metrics=['accuracy'])
+
+model.fit(X_train, y_train, epochs=EPOCHS, batch_size=BATCH_SIZE, verbose=True)
+_, accuracy = model.evaluate(X_test, y_test, batch_size=BATCH_SIZE, verbose=0)
+print(accuracy)
+experiment.log_other('model', model)
+experiment.end()
