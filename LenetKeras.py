@@ -20,7 +20,7 @@ y_test = to_categorical(y_test)
 
 n_timesteps, n_features, n_outputs = atts.shape[1], 1, 2
 EPOCHS = 10
-BATCH_SIZE = 128
+BATCH_SIZE = 8
 
 
 
