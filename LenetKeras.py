@@ -8,21 +8,24 @@ from keras.utils import to_categorical
 from sklearn.model_selection import KFold, train_test_split
 
 data = np.loadtxt('wav_data_c1.txt', delimiter=',', dtype=object)
+data2 = np.loadtxt('wav_data_c2.txt', delimiter=',', dtype=object)
+data = np.vstack((data,data2))
+
 atts = data[:, :-1]
 labels = data[:, -1]
 
-labels[labels ==  '1_Angry'] = 0
-labels[labels ==  '2_Angry'] = 1
+labels[labels == '1_Angry'] = 0
+labels[labels == '2_Angry'] = 0
+labels[labels == '1_disgust'] = 1
+labels[labels == '2_disgust'] = 1
 
 X_train, X_test, y_train, y_test = train_test_split(atts, labels, test_size=0.20, random_state=42)
 y_train = to_categorical(y_train)
 y_test = to_categorical(y_test)
 
 n_timesteps, n_features, n_outputs = atts.shape[1], 1, 2
-EPOCHS = 10
+EPOCHS = 100
 BATCH_SIZE = 8
-
-
 
 model = Sequential()
 model.add(Reshape((n_timesteps, n_features), input_shape=(atts.shape[1],)))
