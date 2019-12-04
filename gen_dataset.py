@@ -1,8 +1,11 @@
-from comet_ml import Experiment
+# from comet_ml import Experiment
 import scipy.io.wavfile as wav
 import numpy as np
+import matplotlib.pyplot as plt
 
 Classes = ['Angry', 'disgust', 'fear', 'happy', 'surprise', 'sad', 'Neutral']
+cortes = []
+
 for c in range(1, 8):
     data = []
     labels = []
@@ -14,18 +17,27 @@ for c in range(1, 8):
             labels.append('{}_{}'.format(i, Classes[c - 1]))
 
     x = [k.shape[0] for k in data]
+    x = np.array(x)
+    x = (x-47166)*100//x
 
+    cortes = cortes + list(x)
     # data_matrix = np.zeros((len(x), int(np.mean(x)+np.std(x)) +1), dtype=object)
-    data_matrix = np.zeros((len(x), 47166), dtype=object)
+    # data_matrix = np.zeros((len(x), 47166), dtype=object)
     # print(data_matrix)
 
-    for i, k in enumerate(data):
-        # print(i, len(k))
-        size = len(k)
-        if size > data_matrix.shape[1] - 1: size = data_matrix.shape[1] - 1
-        data_matrix[i][:size] = k[:size]
-    for i, k in enumerate(labels):
-        data_matrix[i][-1] = k
-    print(data_matrix.shape)
+    # for i, k in enumerate(data):
+    #     # print(i, len(k))
+    #     size = len(k)
+    #     if size > data_matrix.shape[1] - 1: size = data_matrix.shape[1] - 1
+    #     data_matrix[i][:size] = k[:size]
+    # for i, k in enumerate(labels):
+    #     data_matrix[i][-1] = k
+    # print(data_matrix.shape)
+    #
+    # np.savetxt('Dataset/wav_data_c{}.txt'.format(c), data_matrix, delimiter=',', fmt="%s")
+print(cortes)
 
-    np.savetxt('Dataset/wav_data_c{}.txt'.format(c), data_matrix, delimiter=',', fmt="%s")
+X, Y = np.unique(cortes,return_counts=True)
+
+plt.bar(X,Y)
+plt.show()

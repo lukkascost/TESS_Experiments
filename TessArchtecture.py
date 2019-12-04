@@ -1,22 +1,25 @@
 import numpy as np
-from comet_ml import Experiment
-experiment = Experiment(api_key="9F7edG4BHTWFJJetI2XctSUzM",
-                        project_name="teste-lenet", workspace="lukkascost")
-experiment.set_name("TESS_07_EP_02")
+# from comet_ml import Experiment
+# experiment = Experiment(api_key="9F7edG4BHTWFJJetI2XctSUzM",
+#                         project_name="tess-dataset-f16", workspace="lukkascost")
+# experiment.set_name("TESS_07_F16_EP_01")
 from keras import Sequential, optimizers, losses
 from keras.layers import Conv1D, AveragePooling1D, Flatten, Dense, Reshape, Activation, BatchNormalization, Dropout, \
     MaxPooling1D
 from keras.utils import to_categorical, np_utils
 from sklearn.model_selection import KFold, train_test_split
-from sklearn.preprocessing import LabelEncoder
+from Dataset.BN16 import BatchNormalizationF16
+from keras import backend as K
 
-data = np.loadtxt('wav_data_c1.txt', delimiter=',', dtype=object)
-data2 = np.loadtxt('wav_data_c2.txt', delimiter=',', dtype=object)
-data3 = np.loadtxt('wav_data_c3.txt', delimiter=',', dtype=object)
-data4 = np.loadtxt('wav_data_c4.txt', delimiter=',', dtype=object)
-data5 = np.loadtxt('wav_data_c5.txt', delimiter=',', dtype=object)
-data6 = np.loadtxt('wav_data_c6.txt', delimiter=',', dtype=object)
-data7 = np.loadtxt('wav_data_c7.txt', delimiter=',', dtype=object)
+K.set_floatx('float32')
+
+data = np.loadtxt('Dataset/wav_data_c1.txt', delimiter=',', dtype=object)
+data2 = np.loadtxt('Dataset/wav_data_c2.txt', delimiter=',', dtype=object)
+data3 = np.loadtxt('Dataset/wav_data_c3.txt', delimiter=',', dtype=object)
+data4 = np.loadtxt('Dataset/wav_data_c4.txt', delimiter=',', dtype=object)
+data5 = np.loadtxt('Dataset/wav_data_c5.txt', delimiter=',', dtype=object)
+data6 = np.loadtxt('Dataset/wav_data_c6.txt', delimiter=',', dtype=object)
+data7 = np.loadtxt('Dataset/wav_data_c7.txt', delimiter=',', dtype=object)
 data = np.vstack((data,data2, data3, data4, data5, data6, data7))
 
 atts = data[:, :-1]
@@ -81,8 +84,8 @@ model.fit(X_train, y_train, epochs=EPOCHS, batch_size=BATCH_SIZE, verbose=True)
 _, accuracy = model.evaluate(X_test, y_test, batch_size=BATCH_SIZE, verbose=0)
 print(accuracy)
 model.save('model.h5')
-experiment.log_asset("model.h5")
+# experiment.log_asset("model.h5")
 model.save_weights('model.weights')
-experiment.log_asset("model.weights")
-experiment.log_other('model', model)
-experiment.end()
+# experiment.log_asset("model.weights")
+# experiment.log_other('model', model)
+# experiment.end()
