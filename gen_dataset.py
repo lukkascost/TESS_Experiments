@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 
 Classes = ['Angry', 'disgust', 'fear', 'happy', 'surprise', 'sad', 'Neutral']
 cortes = []
+global_num = []
+classes_qtd = np.zeros(7)
 
 for c in range(1, 8):
     data = []
@@ -17,13 +19,13 @@ for c in range(1, 8):
             labels.append('{}_{}'.format(i, Classes[c - 1]))
 
     x = [k.shape[0] for k in data]
+    global_num = global_num + x
     x = np.array(x)
-    x = (x-47166)*100//x
-
+    x = (x - 50214) * 100 // x
+    classes_qtd[c - 1] = len(x[np.logical_and(x >= -10, x <= 10)])
     cortes = cortes + list(x)
     # data_matrix = np.zeros((len(x), int(np.mean(x)+np.std(x)) +1), dtype=object)
     # data_matrix = np.zeros((len(x), 47166), dtype=object)
-    # print(data_matrix)
 
     # for i, k in enumerate(data):
     #     # print(i, len(k))
@@ -35,9 +37,12 @@ for c in range(1, 8):
     # print(data_matrix.shape)
     #
     # np.savetxt('Dataset/wav_data_c{}.txt'.format(c), data_matrix, delimiter=',', fmt="%s")
-print(cortes)
-
-X, Y = np.unique(cortes,return_counts=True)
-
-plt.bar(X,Y)
+X, Y = np.unique(cortes, return_counts=True)
+print np.mean(cortes), np.std(cortes)
+print np.mean(global_num), np.std(global_num)
+cortes = np.array(cortes)
+print len(cortes[np.logical_and(cortes >= -20, cortes <= 20)])
+print len(cortes)
+print classes_qtd
+plt.bar(X, Y)
 plt.show()
