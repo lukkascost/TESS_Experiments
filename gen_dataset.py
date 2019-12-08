@@ -25,24 +25,19 @@ for c in range(1, 8):
     classes_qtd[c - 1] = len(x[np.logical_and(x >= -10, x <= 10)])
     cortes = cortes + list(x)
     # data_matrix = np.zeros((len(x), int(np.mean(x)+np.std(x)) +1), dtype=object)
-    # data_matrix = np.zeros((len(x), 47166), dtype=object)
+    data_matrix = np.zeros((int(classes_qtd[c-1]), 50214), dtype=object)
+    index = 0
+    for i, k in enumerate(data):
+        size = len(k)
+        if np.logical_and(x >= -10, x <= 10)[i] :
+            if size > data_matrix.shape[1] - 1: size = data_matrix.shape[1] - 1
+            data_matrix[index][:size] = k[:size]
+            index += 1
+    index = 0
+    for i, k in enumerate(labels):
+        if np.logical_and(x >= -10, x <= 10)[i] :
+            data_matrix[index][-1] = k
+            index+=1
+    print(data_matrix.shape)
 
-    # for i, k in enumerate(data):
-    #     # print(i, len(k))
-    #     size = len(k)
-    #     if size > data_matrix.shape[1] - 1: size = data_matrix.shape[1] - 1
-    #     data_matrix[i][:size] = k[:size]
-    # for i, k in enumerate(labels):
-    #     data_matrix[i][-1] = k
-    # print(data_matrix.shape)
-    #
-    # np.savetxt('Dataset/wav_data_c{}.txt'.format(c), data_matrix, delimiter=',', fmt="%s")
-X, Y = np.unique(cortes, return_counts=True)
-print np.mean(cortes), np.std(cortes)
-print np.mean(global_num), np.std(global_num)
-cortes = np.array(cortes)
-print len(cortes[np.logical_and(cortes >= -20, cortes <= 20)])
-print len(cortes)
-print classes_qtd
-plt.bar(X, Y)
-plt.show()
+    np.savetxt('Dataset/wav_data_c{}.txt'.format(c), data_matrix, delimiter=',', fmt="%s")
