@@ -1,4 +1,5 @@
 # from comet_ml import Experiment
+import librosa
 import scipy.io.wavfile as wav
 import numpy as np
 import matplotlib.pyplot as plt
@@ -16,6 +17,8 @@ for c in range(1, 8):
             if (j == 48 and i == 2 and c == 1): continue
             if (j == 112 and i == 2 and c == 3): continue
             data.append(wav.read('../Dataset_tess/C{2}/C{2}_{0}_{1}.wav'.format(i, j, c))[1])
+            X, sample_rate = librosa.load('../Dataset_tess/C{2}/C{2}_{0}_{1}.wav'.format(i, j, c), res_type='kaiser_fast', duration=2.5, sr=22050 * 2, offset=0.5)
+            print(sample_rate,X)
             labels.append('{}_{}'.format(i, Classes[c - 1]))
 
     x = [k.shape[0] for k in data]
