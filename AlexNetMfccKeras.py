@@ -56,16 +56,16 @@ for it in range(1, 11):
     BATCH_SIZE = 8
     print(n_timesteps, n_features)
     model = Sequential()
-    # model.add(Reshape((n_timesteps, n_features), input_shape=(atts.shape[1],)))
+    model.add(Reshape((n_timesteps, n_features), input_shape=(atts.shape[1],)))
     model.add(Conv1D(256, 8, padding='same', input_shape=(X_train.shape[1], 1)))  # X_train.shape[1] = No. of Columns
     model.add(Activation('relu'))
-    model.add(MaxPooling1D(pool_size=(8)))
+    model.add(MaxPooling1D(pool_size=(2)))
 
     model.add(Conv1D(256, 8, padding='same'))
     model.add(BatchNormalization())
     model.add(Activation('relu'))
     model.add(Dropout(0.25))
-    model.add(MaxPooling1D(pool_size=(8)))
+    model.add(MaxPooling1D(pool_size=(2)))
 
     model.add(Conv1D(128, 8, padding='same'))
     model.add(Activation('relu'))
@@ -80,7 +80,7 @@ for it in range(1, 11):
     # model.add(Conv1D(128, 8, padding='same'))
     # model.add(Activation('relu'))
     model.add(Dropout(0.25))
-    model.add(MaxPooling1D(pool_size=(8)))
+    model.add(MaxPooling1D(pool_size=(2)))
     # model.add(Conv1D(64, 8, padding='same'))
     # model.add(Activation('relu'))
     # model.add(Conv1D(64, 8, padding='same'))
