@@ -22,8 +22,10 @@ data6 = np.loadtxt('Dataset/wav_data_c6.txt', delimiter=',', dtype=object)
 data7 = np.loadtxt('Dataset/wav_data_c7.txt', delimiter=',', dtype=object)
 data = np.vstack((data,data2, data3, data4, data5, data6, data7))
 
+sample_rate = 24414
 atts = data[:, :-1]
 labels = data[:, -1]
+atts = np.array([np.mean(librosa.feature.mfcc(y=np.float32(x), sr=sample_rate, n_mfcc=13), axis=0) for x in atts])
 
 labels[labels == '1_Angry'] = 0
 labels[labels == '2_Angry'] = 0
